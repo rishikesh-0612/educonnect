@@ -12,54 +12,6 @@ A clean, minimalist 3-Step Flask web platform engineered for 1-click deployment 
 3. **Step 3: Cohorts & Chat**: Micro-tuition batches with live asynchronous 3-second AJAX polling chat.
 
 ---
-
-## 🚀 How to Upload to GitHub (Git)
-
-Run these commands inside this **`educonnect`** folder:
-
-```bash
-cd "c:\src\educonnect"
-
-# 1. Initialize Git repository
-git init
-
-# 2. Add all files
-git add .
-
-# 3. Create initial commit
-git commit -m "Initial commit: EduConnect 3-step platform ready for Render"
-
-# 4. Set branch to main
-git branch -M main
-
-# 5. Link to your GitHub repository (replace with your repo URL)
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/educonnect.git
-
-# 6. Push code to GitHub
-git push -u origin main
-```
-
----
-
-## 🌐 How to Deploy on Render (Free & Fast)
-
-1. Go to [render.com](https://render.com) and log in.
-2. Click **New +** $\rightarrow$ **Web Service**.
-3. Select **Build and deploy from a Git repository** and connect your `educonnect` repository.
-4. Fill in the settings:
-   - **Name**: `educonnect`
-   - **Language**: `Python`
-   - **Branch**: `main`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-   - **Plan**: `Free`
-5. Click **Create Web Service**!
-
-> 💡 **Database on Render**:
-> `app.py` has built-in automatic fallback: if an external MySQL database isn't configured, it automatically initializes and runs on embedded SQLite with pre-seeded demo accounts, guaranteeing your Render app **never crashes**!
-
----
-
 ## 📂 Project Structure
 
 ```
