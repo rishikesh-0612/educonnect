@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduConnect | Login</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    padding: 40px 15px;
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    color: #20243a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 480px;
+    width: 100%;
+    margin: auto;
+    padding: 36px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(30, 40, 90, .10);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.header h1 {
+    color: #5546d8;
+    font-size: 30px;
+}
+
+.header p {
+    margin-top: 8px;
+    color: #777;
+    font-size: 14px;
+}
+
+.alert-box {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.alert-info {
+    background: #e0e7ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+}
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    outline: none;
+    font-size: 14px;
+    background: white;
+    transition: border-color .2s;
+}
+
+input:focus {
+    border-color: #6556e8;
+    box-shadow: 0 0 0 3px rgba(101, 86, 232, .12);
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    color: white;
+    background: linear-gradient(135deg, #6556e8, #8a55d7);
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: opacity .2s;
+}
+
+.submit-btn:hover {
+    opacity: .92;
+}
+
+.footer-links {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.footer-links a {
+    color: #5546d8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.home-link {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #888;
+    text-decoration: none;
+}
+
+.home-link:hover {
+    color: #333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <a href="/" style="text-decoration:none; color:#4f46e5; font-size:13px; font-weight:700;">&larr; Back to Home</a>
+        <span style="font-size:11.5px; font-weight:700; color:#6366f1; background:#eef2ff; padding:4px 10px; border-radius:20px;">EduConnect Basic</span>
+    </div>
+
+    <div class="header">
+        <h1>EduConnect</h1>
+        <p>Log in to access your student or teacher dashboard</p>
+    </div>
+
+    <!-- Flash message display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-box">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category in ['error', 'success', 'info'] else 'info' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/login" method="POST">
+        <div class="form-grid">
+
+            <div class="field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       placeholder="Enter registered email" required autofocus>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Log In
+            </button>
+
+        </div>
+    </form>
+
+    <!-- Evaluator & Quick Access Directory -->
+    <div style="margin-top: 24px; padding: 18px; background: #fafbff; border: 1px solid #e0e7ff; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+        <div style="font-size: 12px; font-weight: 700; color: #4338ca; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; text-align: center;">
+            <i class="fa-solid fa-id-badge"></i> Quick Evaluation Accounts
+        </div>
+
+
+
+        <div style="margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700; color: #059669; text-transform: uppercase;">👨‍🏫 Teachers:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px;">
+                <a href="/demo-login/hemanth" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Hemanth (Chem)</a>
+                <a href="/demo-login/rahul.social" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Rahul (Social)</a>
+                <a href="/demo-login/saiteja" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Sai Teja (Social)</a>
+                <a href="/demo-login/manish" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Manish (Maths)</a>
+                <a href="/demo-login/prudhvi.maths" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Prudhvi (Maths)</a>
+                <a href="/demo-login/anmol" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Anmol (Sanskrit)</a>
+                <a href="/demo-login/sandeep" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Sandeep (English)</a>
+            </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <span style="font-size: 11px; font-weight: 700; color: #4338ca; text-transform: uppercase;">👨‍🎓 Students:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px;">
+                <a href="/demo-login/vivek" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Vivek (Maths)</a>
+                <a href="/demo-login/pruthvi.sanskrit" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Pruthvi (Sanskrit)</a>
+                <a href="/demo-login/manoj" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Manoj (Social)</a>
+                <a href="/demo-login/sanjay" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Sanjay (Chem)</a>
+                <a href="/demo-login/mahender" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:600; text-decoration:none;">Mahender (Maths)</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-links">
+        <p>Don't have an account yet?</p>
+        <p>
+            <a href="/student-register">Register as Student</a> &bull;
+            <a href="/teacher-register">Register as Teacher</a>
+        </p>
+        <div>
+            <a href="/" class="home-link">&larr; Back to Home</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

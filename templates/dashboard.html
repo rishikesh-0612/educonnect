@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduConnect | Realtime Tuition Dashboard</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #f4f6fb;
+    color: #20243a;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Decent Elegant Header */
+.app-header {
+    background: #0f172a; /* Deep elegant slate */
+    border-bottom: 1px solid #1e293b;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.35);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-size: 19px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+}
+
+.brand-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    color: #cbd5e1;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-item i {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item.active {
+    color: #ffffff;
+    background: #4f46e5;
+    font-weight: 700;
+}
+
+.nav-report {
+    background: rgba(79, 70, 229, 0.25);
+    color: #c7d2fe;
+    border: 1px solid rgba(165, 180, 252, 0.3);
+}
+
+.nav-report:hover {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.nav-admin {
+    color: #fca5a5;
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.nav-admin:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 12px 4px 5px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 30px;
+}
+
+.avatar-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.1;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.role-student { color: #60a5fa; }
+.role-teacher { color: #c084fc; }
+.role-admin { color: #f87171; }
+
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+/* Realtime User Banner */
+.user-banner {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 24px 30px;
+}
+
+.banner-inner {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.user-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-title h1 {
+    font-size: 24px;
+}
+
+.role-badge {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.25);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #a7f3d0;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 15px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.location-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #e0e7ff;
+}
+
+.btn-sync-gps {
+    background: white;
+    color: #4f46e5;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .2s;
+}
+
+.btn-sync-gps:hover {
+    background: #eef2ff;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 24px auto;
+    padding: 0 20px;
+    flex: 1;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 9px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* Stat Counters */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 14px rgba(30, 40, 90, .05);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin: 6px 0 2px;
+}
+
+.stat-sub {
+    font-size: 12px;
+    color: #10b981;
+    font-weight: 600;
+}
+
+/* Layout 2 Columns */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 22px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 14px rgba(30, 40, 90, .05);
+    margin-bottom: 22px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.card-header h2 {
+    font-size: 17px;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-header a {
+    font-size: 13px;
+    color: #5546d8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.card-header a:hover {
+    text-decoration: underline;
+}
+
+/* Map */
+#liveMap {
+    height: 320px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Nearby Items List */
+.nearby-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nearby-item {
+    background: #fafbfe;
+    border: 1px solid #eef2ff;
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform .15s, border-color .15s;
+}
+
+.nearby-item:hover {
+    transform: translateY(-2px);
+    border-color: #c7d2fe;
+}
+
+.nearby-info h4 {
+    font-size: 15px;
+    color: #1f2937;
+    margin-bottom: 3px;
+}
+
+.nearby-info p {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.dist-pill {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* Cohorts List */
+.cohort-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cohort-item h4 {
+    font-size: 15px;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.cohort-item p {
+    font-size: 12.5px;
+    color: #6b7280;
+}
+
+.btn-open-chat {
+    background: #5546d8;
+    color: white;
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-open-chat:hover {
+    background: #4637b8;
+}
+
+/* Profile details */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px dashed #f0f0f0;
+    font-size: 13.5px;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.info-row .val {
+    color: #111827;
+    font-weight: 500;
+    text-align: right;
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="app-header">
+    <div class="header-left">
+        <a href="/" class="brand-logo">
+            <div class="brand-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="brand-text">
+                <span class="brand-name">EduConnect</span>
+                <span class="brand-tag">Digital Tuitions</span>
+            </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/dashboard" class="nav-item active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="/nearby" class="nav-item"><i class="fa-solid fa-compass"></i> Nearby {{ 'Teachers' if user.role == 'student' else 'Students' }}</a>
+            <a href="/cohorts" class="nav-item"><i class="fa-solid fa-users"></i> Tuition Cohorts</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <div class="user-chip">
+            <span class="avatar-circle">{{ user.full_name[0]|upper }}</span>
+            <div class="user-meta">
+                <span class="user-name">{{ user.full_name }}</span>
+                <span class="user-role-badge role-{{ user.role }}">{{ user.role|capitalize }}</span>
+            </div>
+        </div>
+        <a href="/logout" class="btn-logout" title="Sign Out">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Log Out</span>
+        </a>
+    </div>
+</header>
+
+<!-- REALTIME USER STATUS BANNER -->
+<div class="user-banner">
+    <div class="banner-inner">
+        <div>
+            <div class="user-title">
+                <h1>Welcome, {{ user.full_name }}</h1>
+                <span class="role-badge">{{ user.role }} Account</span>
+                <span class="live-indicator">
+                    <span class="pulse-dot"></span> Realtime Active
+                </span>
+            </div>
+            <div class="location-bar">
+                <span>📍 Registered GPS: <strong id="coordsText">{{ user.latitude }}, {{ user.longitude }}</strong></span>
+                <button type="button" class="btn-sync-gps" onclick="syncLiveGPS()">
+                    <span>📡 Sync My Live GPS</span>
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <a href="/cohorts" style="background:rgba(255,255,255,0.25); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-size:13.5px; font-weight:600;">
+                + Create Tuition Batch
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- 1. REALTIME METRICS STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Nearby {{ 'Tutors' if user.role == 'student' else 'Students' }}</span>
+            <div class="stat-value" id="nearbyCount">{{ nearby_matches|length }}</div>
+            <span class="stat-sub">📍 Within 50 km (Haversine)</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Active Tuition Cohorts</span>
+            <div class="stat-value">{{ my_cohorts|length }}</div>
+            <span class="stat-sub">👥 Enrolled & Participating</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Available Local Batches</span>
+            <div class="stat-value">{{ open_cohorts|length }}</div>
+            <span class="stat-sub">🏫 Open for enrollment</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">GPS Sync Status</span>
+            <div class="stat-value" style="font-size:20px; color:#10b981; margin-top:10px;">🟢 Connected</div>
+            <span class="stat-sub" id="gpsSyncStatus">Auto-calibrated</span>
+        </div>
+    </div>
+
+    <!-- 2. MAIN REALTIME GRID -->
+    <div class="dashboard-grid">
+
+        <!-- LEFT COLUMN: Live Map & Nearby Matches -->
+        <div>
+
+            <!-- Live Proximity Map Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🗺️ Live Locality Radar (Proximity Map)</h2>
+                    <span style="font-size:12px; color:#6b7280;">Realtime GPS Visualization</span>
+                </div>
+                <div id="liveMap"></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:12.5px; color:#6b7280;">
+                    <span>🔵 Blue: Your Location</span>
+                    <span>🟣 Purple: Nearby {{ 'Teachers' if user.role == 'student' else 'Students' }}</span>
+                    <span>🟢 Green: Tuition Cohort Hubs</span>
+                </div>
+            </div>
+
+            <!-- Realtime Nearby Candidates Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📍 Nearby {{ 'Teachers & Mentors' if user.role == 'student' else 'Students Seeking Tuition' }}</h2>
+                    <a href="/nearby">View All ({{ nearby_matches|length }}) &rarr;</a>
+                </div>
+
+                <div class="nearby-list" id="nearbyList">
+                    {% if nearby_matches %}
+                        {% for item in nearby_matches[:5] %}
+                            <div class="nearby-item">
+                                <div class="nearby-info">
+                                    <h4>{{ item.full_name }}</h4>
+                                    <p>
+                                        {% if item.role == 'teacher' %}
+                                            {{ item.qualification }} &bull; {{ item.experience }} Yrs Exp &bull; <strong>{{ item.subjects_taught }}</strong>
+                                        {% else %}
+                                            {{ item.grade }} ({{ item.board }}) &bull; <strong>{{ item.subjects }}</strong>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="dist-pill">📍 {{ item.distance_km }} km</span>
+                                    <a href="/cohorts" style="background:#5546d8; color:white; padding:6px 12px; border-radius:6px; font-size:12px; text-decoration:none; font-weight:600;">Cohort Invite</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color:#9ca3af; font-size:13.5px; text-align:center; padding:15px;">No nearby candidates found within your radius right now.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Enrolled Cohorts & Profile Info -->
+        <div>
+
+            <!-- Active Tuition Cohorts -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>👥 My Tuition Cohorts</h2>
+                    <a href="/cohorts">Manage &rarr;</a>
+                </div>
+
+                {% if my_cohorts %}
+                    {% for c in my_cohorts[:4] %}
+                        <div class="cohort-item">
+                            <div>
+                                <h4>{{ c.name }}</h4>
+                                <p>{{ c.subject }} &bull; {{ c.grade }} &bull; 👥 {{ c.member_count }} members</p>
+                            </div>
+                            <a href="/cohort/{{ c.id }}" class="btn-open-chat">Open Chat &rarr;</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:15px; color:#6b7280; font-size:13px;">
+                        <p>You haven't joined any tuition cohorts yet.</p>
+                        <a href="/cohorts" style="display:inline-block; margin-top:8px; background:#5546d8; color:white; padding:7px 12px; border-radius:6px; text-decoration:none; font-weight:600; font-size:12px;">+ Discover or Create Cohort</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Verified Account Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>👤 Account & Academic Details</h2>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Full Name:</span>
+                    <span class="val">{{ user.full_name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email Address:</span>
+                    <span class="val">{{ user.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Mobile Number:</span>
+                    <span class="val">{{ user.mobile }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Registered Role:</span>
+                    <span class="val" style="text-transform: capitalize; font-weight:700; color:#5546d8;">{{ user.role }}</span>
+                </div>
+
+                {% if user.role == 'student' and profile %}
+                    <div class="info-row">
+                        <span class="label">Class / Grade:</span>
+                        <span class="val">{{ profile.grade }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Education Board:</span>
+                        <span class="val">{{ profile.board }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Key Subjects:</span>
+                        <span class="val">{{ profile.subjects }}</span>
+                    </div>
+                {% elif user.role == 'teacher' and profile %}
+                    <div class="info-row">
+                        <span class="label">Qualification:</span>
+                        <span class="val">{{ profile.qualification }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Experience:</span>
+                        <span class="val">{{ profile.experience }} Years</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Subjects Taught:</span>
+                        <span class="val">{{ profile.subjects_taught }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let userLat = {{ user.latitude }};
+    let userLng = {{ user.longitude }};
+    const mapItems = {{ map_items_json|safe }};
+
+    // Initialize Map
+    const map = L.map('liveMap').setView([userLat, userLng], 12);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+    }).addTo(map);
+
+    // Current User Marker (Blue Circle)
+    let userMarker = L.circleMarker([userLat, userLng], {
+        radius: 9,
+        color: '#1d4ed8',
+        fillColor: '#3b82f6',
+        fillOpacity: 0.9,
+        weight: 3
+    }).addTo(map);
+    userMarker.bindPopup("<b>You Are Here</b><br>{{ user.full_name }} ({{ user.role|capitalize }})").openPopup();
+
+    // Render Nearby Markers
+    mapItems.forEach(item => {
+        if (item.type === 'cohort') {
+            // Cohort Center Marker (Green)
+            const cm = L.circleMarker([item.latitude, item.longitude], {
+                radius: 8,
+                color: '#047857',
+                fillColor: '#10b981',
+                fillOpacity: 0.9,
+                weight: 2
+            }).addTo(map);
+            cm.bindPopup(`
+                <b>🏫 ${item.name}</b><br>
+                <strong>Subject:</strong> ${item.subject} (${item.grade})<br>
+                <strong>Distance:</strong> ${item.distance_km} km away<br>
+                <a href="/cohort/${item.id}" style="color:#5546d8; font-weight:600;">Open Cohort Chat &rarr;</a>
+            `);
+        } else {
+            // Person Marker (Teacher or Student)
+            const pm = L.marker([item.latitude, item.longitude]).addTo(map);
+            pm.bindPopup(`
+                <b style="color:#5546d8;">${item.full_name}</b> (${item.role})<br>
+                <strong>Distance:</strong> ${item.distance_km} km away<br>
+                ${item.role === 'teacher' ? `<strong>Qualification:</strong> ${item.qualification || ''}<br><strong>Subjects:</strong> ${item.subjects_taught || ''}` : `<strong>Class:</strong> ${item.grade || ''}<br><strong>Subjects:</strong> ${item.subjects || ''}`}
+            `);
+        }
+    });
+
+    // Realtime GPS Sync Function
+    function syncLiveGPS() {
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser.");
+            return;
+        }
+
+        const statusEl = document.getElementById('gpsSyncStatus');
+        statusEl.textContent = "Acquiring GPS...";
+
+        navigator.geolocation.getCurrentPosition(
+            async function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                try {
+                    const res = await fetch('/api/update-location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ latitude: lat, longitude: lng })
+                    });
+
+                    if (res.ok) {
+                        userLat = lat;
+                        userLng = lng;
+                        document.getElementById('coordsText').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                        userMarker.setLatLng([lat, lng]);
+                        map.setView([lat, lng], 13);
+                        statusEl.textContent = "Synced just now";
+                        alert("GPS Location successfully synchronized with MySQL in real time! Reloading radar...");
+                        window.location.reload();
+                    } else {
+                        statusEl.textContent = "Sync failed";
+                    }
+                } catch(err) {
+                    console.error('GPS sync error:', err);
+                    statusEl.textContent = "Network error";
+                }
+            },
+            function(err) {
+                alert("Location access denied or unavailable: " + err.message);
+                statusEl.textContent = "Permission denied";
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+</script>
+
+</body>
+</html>
