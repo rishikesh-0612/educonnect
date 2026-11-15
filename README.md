@@ -1,8 +1,7 @@
 # EduConnect 🎓
 ### Hyperlocal Digitalized Tuitions & Collaborative Learning Platform
 
-A clean, minimalist 3-Step Flask web platform engineered for 1-click deployment on **Render** and version control on **GitHub**.
-
+A clean, minimalist 3-Step Flask web platform engineered for connecting near by mentors and students.
 ---
 
 ## 🎯 The 3 Core Steps
